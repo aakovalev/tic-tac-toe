@@ -7,12 +7,17 @@ import static org.junit.Assert.assertTrue;
 public class TicTacToeTest {
     private Game game;
     private Player player;
+    private Player secondPlayer;
 
     @Before
     public void setUp() {
-        game = new Game();
         player = new Player();
+        secondPlayer = new Player();
+        game = new Game(player, secondPlayer);
     }
+
+    //@todo test that players must not be the same
+    //@todo test that player can not make any move before he (she) will be associated with the game
 
     @Test
     public void testThatNewGameIsNotOver() {
@@ -21,7 +26,6 @@ public class TicTacToeTest {
 
     @Test
     public void testThatPlayerCanMakeMove() {
-        Player player = new Player();
         Move move = player.makeMove(1, 1);
         assertTrue("Move was made", player.moves().contains(move));
     }
@@ -39,23 +43,29 @@ public class TicTacToeTest {
     }
 
     @Test (expected = IllegalMoveException.class)
+    public void testThatMakeTheSameMoveTwiceNotPossibleInTheGameEvenForDifferentPlayers() {
+        player.makeMove(2, 3);
+        secondPlayer.makeMove(2, 3);
+    }
+
+    @Test (expected = IllegalMoveException.class)
     public void testThatMakeTheMoveWhereRowIsLessThanMinRowIsNotPossible() {
-        game.makeMove(Game.MIN_ROW - 1, 1);
+        player.makeMove(Game.MIN_ROW - 1, 1);
     }
 
     @Test (expected = IllegalMoveException.class)
     public void testThatMakeTheMoveWhereRowIsGreaterThanMaxRowIsNotPossible() {
-        game.makeMove(Game.MAX_ROW + 1, 1);
+        player.makeMove(Game.MAX_ROW + 1, 1);
     }
 
     @Test (expected = IllegalMoveException.class)
     public void testThatMakeTheMoveWhereColumnIsLessThanMinColumnIsNotPossible() {
-        game.makeMove(1, Game.MIN_COLUMN - 1);
+        player.makeMove(1, Game.MIN_COLUMN - 1);
     }
 
     @Test (expected = IllegalMoveException.class)
     public void testThatMakeTheMoveWhereColumnIsGreaterThanMaxColumnIsNotPossible() {
-        game.makeMove(1, Game.MAX_COLUMN + 1);
+        player.makeMove(1, Game.MAX_COLUMN + 1);
     }
 
     @Test
@@ -72,14 +82,17 @@ public class TicTacToeTest {
     }
 
     private Game setUpGameStateWhenOnePlayerFilledWholeColumn(int columnIndex) {
-        Game game = new Game();
-        game.makeMove(1, columnIndex);
-        game.makeMove(1, columnIndex % Game.MAX_COLUMN + 1);
+        Player firstPlayer = new Player();
+        Player secondPlayer = new Player();
+        Game game = new Game(firstPlayer, secondPlayer);
 
-        game.makeMove(2, columnIndex);
-        game.makeMove(2, columnIndex % Game.MAX_COLUMN + 1);
+        firstPlayer.makeMove(1, columnIndex);
+        secondPlayer.makeMove(1, columnIndex % Game.MAX_COLUMN + 1);
 
-        game.makeMove(3, columnIndex);
+        firstPlayer.makeMove(2, columnIndex);
+        secondPlayer.makeMove(2, columnIndex % Game.MAX_COLUMN + 1);
+
+        firstPlayer.makeMove(3, columnIndex);
         return game;
     }
 
@@ -92,30 +105,36 @@ public class TicTacToeTest {
     }
 
     private Game setUpGameStateWhenOnePlayerFilledWholeRow(int row) {
-        Game game = new Game();
-        game.makeMove(row, 1);
-        game.makeMove(row % Game.MAX_ROW + 1, 1);
+        Player firstPlayer = new Player();
+        Player secondPlayer = new Player();
+        Game game = new Game(firstPlayer, secondPlayer);
 
-        game.makeMove(row, 2);
-        game.makeMove(row % Game.MAX_ROW + 1, 2);
+        firstPlayer.makeMove(row, 1);
+        secondPlayer.makeMove(row % Game.MAX_ROW + 1, 1);
 
-        game.makeMove(row, 3);
+        firstPlayer.makeMove(row, 2);
+        secondPlayer.makeMove(row % Game.MAX_ROW + 1, 2);
+
+        firstPlayer.makeMove(row, 3);
         return game;
     }
 
     @Test
     public void testThatGameIsOverWhenNoPossibleMovesLeft() {
-        Game game = new Game();
-        game.makeMove(1, 1);
-        game.makeMove(2, 2);
-        game.makeMove(3, 1);
-        game.makeMove(2, 1);
-        game.makeMove(2, 3);
+        player.makeMove(1, 1);
+        secondPlayer.makeMove(2, 2);
 
-        game.makeMove(3, 3);
-        game.makeMove(1, 3);
-        game.makeMove(1, 2);
-        game.makeMove(3, 2);
+        player.makeMove(3, 1);
+        secondPlayer.makeMove(2, 1);
+
+        player.makeMove(2, 3);
+        secondPlayer.makeMove(3, 3);
+
+        player.makeMove(1, 3);
+        secondPlayer.makeMove(1, 2);
+
+        player.makeMove(3, 2);
+
         assertTrue(game.isOver());
     }
 }

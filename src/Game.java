@@ -11,6 +11,11 @@ public class Game {
 
     List<Move> moves = new ArrayList<Move>();
 
+    public Game(Player firstPlayer, Player secondPlayer) {
+        firstPlayer.associateWithGame(this);
+        secondPlayer.associateWithGame(this);
+    }
+
     public boolean hasWinner() {
         return isAnyColumnFilled() || isAnyRowFilled();
     }
@@ -50,14 +55,13 @@ public class Game {
     }
 
     public boolean isOver() {
-        return moves().size() == maxMoves() ? true : false;
+        return moves().size() == maxMoves();
     }
 
-    public Move makeMove(int row, int column) throws IllegalMoveException {
-        Move move = new Move(row, column);
+    public void makeMove(Move move) {
         if (move.canBeMadeIn(this /* game */)) {
             moves.add(move);
-            return move;
+            return;
         }
         throw new IllegalMoveException();
     }
