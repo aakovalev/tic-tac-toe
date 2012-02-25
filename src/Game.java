@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Game {
@@ -9,9 +8,12 @@ public class Game {
     public static final int MIN_COLUMN = 1;
     public static final int MAX_COLUMN = 3;
 
-    List<Move> moves = new ArrayList<Move>();
+    private final Player firstPlayer;
+    private final Player secondPlayer;
 
     public Game(Player firstPlayer, Player secondPlayer) {
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
         firstPlayer.associateWithGame(this);
         secondPlayer.associateWithGame(this);
     }
@@ -23,7 +25,7 @@ public class Game {
     private boolean rowIsFilled(int row) {
         boolean rowIsFilled = true;
         for (int column = 1; column <= MAX_COLUMN; column++) {
-            rowIsFilled = rowIsFilled && moves.contains(new Move(row, column));
+            rowIsFilled = rowIsFilled && moves().contains(new Move(row, column));
         }
         return rowIsFilled;
     }
@@ -31,7 +33,7 @@ public class Game {
     private boolean columnIsFilled(int column) {
         boolean columnIsFilled = true;
         for (int row = 1; row <= MAX_ROW; row++) {
-            columnIsFilled = columnIsFilled && moves.contains(new Move(row, column));
+            columnIsFilled = columnIsFilled && moves().contains(new Move(row, column));
         }
         return columnIsFilled;
     }
@@ -58,16 +60,11 @@ public class Game {
         return moves().size() == maxMoves();
     }
 
-    public void makeMove(Move move) {
-        if (move.canBeMadeIn(this /* game */)) {
-            moves.add(move);
-            return;
-        }
-        throw new IllegalMoveException();
-    }
-
     public List<Move> moves() {
-        return Collections.unmodifiableList(moves);
+        List<Move> movesInGame = new ArrayList<Move>();
+        movesInGame.addAll(firstPlayer.moves());
+        movesInGame.addAll(secondPlayer.moves());
+        return movesInGame;
     }
 
     private int maxMoves() {

@@ -16,9 +16,6 @@ public class TicTacToeTest {
         game = new Game(player, secondPlayer);
     }
 
-    //@todo test that players must not be the same
-    //@todo test that player can not make any move before he (she) will be associated with the game
-
     @Test
     public void testThatNewGameIsNotOver() {
         assertFalse(game.isOver());
@@ -136,5 +133,16 @@ public class TicTacToeTest {
         player.makeMove(3, 2);
 
         assertTrue(game.isOver());
+    }
+
+    @Test
+    public void testThatGamePlayersMustNotBeTheSame() {
+        assertFalse(player.equals(secondPlayer));
+    }
+
+    @Test (expected = PlayerIsNotInTheGameException.class)
+    public void testThatPlayerCanNotMakeAnyMoveBeforeAssociatedWithGame() {
+        Player newPlayer = new Player();
+        newPlayer.makeMove(1, 1);
     }
 }

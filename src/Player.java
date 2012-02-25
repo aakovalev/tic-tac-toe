@@ -3,31 +3,29 @@ import java.util.Collections;
 import java.util.List;
 
 public class Player {
-    List<Move> moves = new ArrayList<Move>();
-    Game game;
+    private final List<Move> moves = new ArrayList<Move>();
+    private Game game;
 
     public Move makeMove(int row, int column) throws IllegalMoveException {
         final Move move = new Move(row, column);
 
-        if (moves().contains(move)) {
-            throw new IllegalMoveException();
+        if (game == null) {
+            throw new PlayerIsNotInTheGameException();
         }
 
-        if (game.moves().contains(move)) {
-            throw new IllegalMoveException();
+        if (move.canBeMadeIn(game)) {
+            moves.add(move);
+            return move;
         }
 
-        moves.add(move);
-        game.makeMove(move);
-
-        return move;
+        throw new IllegalMoveException();
     }
 
     public List<Move> moves() {
         return Collections.unmodifiableList(moves);
     }
 
-    protected void associateWithGame(Game game) {
+    void associateWithGame(Game game) {
         this.game = game;
     }
 }

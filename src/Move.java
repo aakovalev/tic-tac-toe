@@ -1,16 +1,17 @@
 public class Move {
-    int row, column;
+    private final int row;
+    private final int column;
 
     public Move(int row, int column) {
         this.row = row;
         this.column = column;
     }
 
-    public boolean notYetMadeIn(Game game) {
+    boolean notYetMadeIn(Game game) {
         return !game.moves().contains(this);
     }
 
-    public boolean isWithinGameBoundaries() {
+    boolean isWithinGameBoundaries() {
         return row <= Game.MAX_ROW && row >= Game.MIN_ROW &&
                column <= Game.MAX_COLUMN && column >= Game.MIN_COLUMN;
     }
